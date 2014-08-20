@@ -12,6 +12,6 @@
     <string name="pref_test_notif_w_number_title">Com número</string>
     <string name="pref_test_notif_w_number_summary">Cria uma notificação de teste com um número aleatório.</string>
     <string name="pref_test_notif_wo_number_title">Sem número</string>
-    <string name="pref_test_notif_wo_number_summary">Cria uma notificação de teste sem número.\n\nNote:\nOnly shows a number overlay if this app is whitelisted above.</string>
+    <string name="pref_test_notif_wo_number_summary">Cria uma notificação de teste sem número.\n\nNote:\Só mostra uma sobreposição de número, se este aplicativo é lista branca acima.</string>
 
 </resources>
