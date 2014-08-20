@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Contagem de notificações</string>
+    <string name="settings_increment_on_update">Solução</string>
+    <string name="settings_debug">Debug</string>
+    <string name="test_notification_text">Este é uma notificação de teste!</string>
+    <string name="loading">Carregando&#8230;</string>
+    <string name="app_icon_cd">Icone do aplicativo</string>
+    <string name="pref_apps_increase_onupdate_title">Aplicativos Whitelist</string>
+    <string name="pref_apps_increase_onupdate_summary">Solução para aplicativos que ganhou\'t defenir número para notificação.\n\Nunca em vez que um aplicativo selecionado atualiza uma notificação, o número será automaticamente incrementado.\n\nNote:\Neste é necessário se um aplicativo não define o número de notificação em si!</string>
+    <string name="pref_test_notif_w_number_title">Com número</string>
+    <string name="pref_test_notif_w_number_summary">Cria uma notificação de teste com um número aleatório.</string>
+    <string name="pref_test_notif_wo_number_title">Sem número</string>
+    <string name="pref_test_notif_wo_number_summary">Cria uma notificação de teste sem número.\n\nNote:\Só mostra uma sobreposição de número, se este aplicativo é lista branca acima.</string>
+
+</resources>
