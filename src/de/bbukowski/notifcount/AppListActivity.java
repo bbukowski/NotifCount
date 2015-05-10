@@ -1,21 +1,26 @@
 
 package de.bbukowski.notifcount;
 
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -24,9 +29,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by bbukowski on 07.08.14.
+ * Created by bbukowski on 07.08.14. Maintained by woalk since 2015/05/05.
  */
-public class AppListActivity extends PreferenceActivity {
+public class AppListActivity extends ListActivity {
 
   private static SettingsHelper mSettingsHelper;
   private static AppListAdapter mAdapter;
@@ -39,6 +44,8 @@ public class AppListActivity extends PreferenceActivity {
     new LoadAppsInfoTask().execute();
     getActionBar().setDisplayHomeAsUpEnabled(true);
     getActionBar().setTitle(R.string.pref_apps_increase_onupdate_title);
+    
+    this.getListView().setFastScrollEnabled(true);
   }
 
   @Override
@@ -53,6 +60,7 @@ public class AppListActivity extends PreferenceActivity {
     String summary;
     Drawable icon;
     boolean enabled;
+    boolean extract;
   }
 
   private List<AppInfo> loadApps(ProgressDialog dialog) {
@@ -70,6 +78,7 @@ public class AppListActivity extends PreferenceActivity {
       appInfo.summary = app.packageName;
       appInfo.icon = app.loadIcon(packageManager);
       appInfo.enabled = mSettingsHelper.isListed(app.packageName);
+      appInfo.extract = mSettingsHelper.isListedExtract(app.packageName);
       apps.add(appInfo);
       dialog.setProgress(i++);
     }
@@ -141,6 +150,10 @@ public class AppListActivity extends PreferenceActivity {
       TextView title;
       TextView summary;
       CheckBox checkbox;
+      LinearLayout itemlayout;
+      RadioGroup radioG;
+      RadioButton radio0;
+      RadioButton radio1;
     }
 
     @Override
@@ -156,25 +169,68 @@ public class AppListActivity extends PreferenceActivity {
         holder.title = (TextView) view.findViewById(android.R.id.title);
         holder.summary = (TextView) view.findViewById(android.R.id.summary);
         holder.checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+        holder.itemlayout = (LinearLayout) view.findViewById(R.id.itemlayout);
+        holder.radioG = (RadioGroup) view.findViewById(R.id.radioG);
+        holder.radio0 = (RadioButton) view.findViewById(R.id.radio0);
+        holder.radio1 = (RadioButton) view.findViewById(R.id.radio1);
         view.setTag(holder);
       } else {
         view = convertView;
         holder = (Holder) view.getTag();
+        holder.radioG.setVisibility(View.GONE);
       }
 
       holder.title.setText(item.title);
       holder.summary.setText(item.summary);
       holder.icon.setImageDrawable(item.icon);
 
+      holder.checkbox.setOnCheckedChangeListener(null);
       holder.checkbox.setChecked(item.enabled);
-      holder.checkbox.setOnClickListener(new View.OnClickListener() {
+      holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
         @Override
-        public void onClick(View v) {
-          item.enabled = holder.checkbox.isChecked();
-          if (holder.checkbox.isChecked()) {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+          item.enabled = isChecked;
+          if (isChecked) {
             mSettingsHelper.addListItem(item.summary);
           } else {
             mSettingsHelper.removeListItem(item.summary);
+            holder.radio0.setChecked(false);
+            holder.radio1.setChecked(true);
+          }
+        }
+      });
+
+      holder.itemlayout.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          int vis = holder.radioG.getVisibility();
+          holder.radioG.setVisibility(vis == View.GONE ? View.VISIBLE : View.GONE);
+        }
+      });
+
+      View.OnClickListener radioClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          holder.checkbox.setChecked(true);
+        }
+      };
+      holder.radio0.setOnClickListener(radioClick);
+      holder.radio1.setOnClickListener(radioClick);
+
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+        holder.radio0.setVisibility(View.GONE);
+
+      holder.radio0.setOnCheckedChangeListener(null);
+      holder.radio0.setChecked(item.extract);
+      holder.radio1.setChecked(!item.extract);
+      holder.radio0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+          item.extract = isChecked;
+          if (isChecked) {
+            mSettingsHelper.addListItemExtract(item.summary);
+          } else {
+            mSettingsHelper.removeListItemExtract(item.summary);
           }
         }
       });
